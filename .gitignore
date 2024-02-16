@@ -1,0 +1,10 @@
+.DS_Store
+*.pyc
+/.ipynb_checkpoints/
+.idea/**
+.idea
+.vscode/**
+secret/
+store/
+/.fleet/
+.ipynb_checkpoints/

@@ -1,0 +1,13 @@
+PREFIX schema: <https://schema.org/>
+PREFIX geo: <http://www.opengis.net/ont/geosparql#>
+PREFIX geof: <http://www.opengis.net/def/function/geosparql/>
+PREFIX unit: <http://www.opengis.net/def/uom/OGC/1.0/>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+PREFIX kwg-ont: <http://stko-kwg.geog.ucsb.edu/lod/ontology/>
+PREFIX kwgr: <http://stko-kwg.geog.ucsb.edu/lod/resource/>
+
+
+select * where {
+		?s geo:hasGeometry kwgr:geometry.polygon.9854746815075713024 .
+		}
+LIMIT 100

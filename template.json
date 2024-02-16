@@ -1,0 +1,81 @@
+{
+  "@context": { "@vocab":"https://schema.org/",
+    "geosparql": "http://www.opengis.net/ont/geosparql#"},
+  "@id": "https://ufokn.org/id/urmi/{{UFOKN_ID}}",
+  "@type": "Place",
+  "name": "{{UFOKN_ID}}",
+  "additionalType": "{{Type}}",
+  "description": "{{Description}}",
+  "geo": [
+    {
+      "@type": "GeoCoordinates",
+      "latitude": {{Y}},
+      "longitude": {{X}},
+      "elevation": {{Z}}
+    },
+    {
+      "@type": "GeoShape",
+      "geosparql:asWKT": {
+        "@value": "POINT( {{X}} {{Y}} {{Z}} )",
+        "@type": "geosparql:wktLiteral"
+      },
+      "identifier": [
+        {
+          "@type": ["PropertyValue", "https://stko-kwg.geog.ucsb.edu/lod/ontology#S2Cell"],
+        "additionalType": {
+          "@id": "https://stko-kwg.geog.ucsb.edu/lod/ontology#S2Cell"
+      },
+      "name": "s2Level18",
+      "description": "S2 cell at level 18",
+      "value": "{{CellID18}}"
+    },
+    {
+      "@type": ["PropertyValue", "https://stko-kwg.geog.ucsb.edu/lod/ontology#S2Cell"],
+        "additionalType": {
+          "@id": "https://stko-kwg.geog.ucsb.edu/lod/ontology#S2Cell"
+      },
+      "name": "s2Level13",
+      "description": "S2 cell at level 13",
+      "value": "{{CellID13}}"
+    }
+      ]
+    }
+  ],
+  "variableMeasured": [
+    {
+      "@type": "PropertyValue",
+      "name": "Area",
+      "description": "Area of feature in square meters",
+      "propertyID": [
+        "https://www.wikidata.org/wiki/Q25343"
+      ],
+      "unitText": "m^2",
+      "value": {{AreaSqm}},
+      "unitCode": [
+        "http://qudt.org/vocab/unit/M2"
+      ]
+    }
+  ],
+  "identifier": [
+    {
+      "@type": "PropertyValue",
+      "name": "SOURCE_ID",
+      "value": "{{SOURCE_ID}}"
+    },
+    {
+      "@type": "PropertyValue",
+      "name": "UFOKN_ID",
+      "value": "{{UFOKN_ID}}"
+    },
+    {
+      "@type": "PropertyValue",
+      "name": "FEATURE_ID",
+      "value": "{{FEATURE_ID}}"
+    },
+    {
+      "@type": "PropertyValue",
+      "name": "GEOID",
+      "value": "{{GEOID}}"
+    }
+  ]
+}
