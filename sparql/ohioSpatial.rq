@@ -3,12 +3,10 @@ PREFIX geo: <http://www.opengis.net/ont/geosparql#>
 PREFIX geof: <http://www.opengis.net/def/function/geosparql/>
 PREFIX unit: <http://www.opengis.net/def/uom/OGC/1.0/>
 PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
-PREFIX kwg-ont: <http://stko-kwg.geog.ucsb.edu/lod/ontology/>
-PREFIX kwgr: <http://stko-kwg.geog.ucsb.edu/lod/resource/>
 
-select ?s ?kwgres where {
+select ?s ?s2l13 ?buildingLocation where {
             ?s schema:additionalType "power"  .
-            ?s schema:geo ?geo .        
+            ?s schema:geo ?geo .
 
             ?geo schema:identifier ?geoid .
             ?geoid schema:name "s2Level13" .
@@ -18,13 +16,4 @@ select ?s ?kwgres where {
 
             BIND("POINT(-84.3555 41.3175)"^^geo:wktLiteral AS ?centroid)
             BIND(geof:buffer(?centroid, 8.04672, unit:kilometer) AS ?searchArea)
-
-            OPTIONAL {
-                SERVICE <https://stko-kwg.geog.ucsb.edu/workbench/repositories/KWG> {
-                    select * where {
-                        ?kwgs ?kwgp ?s2l13 .
-                        ?kwgres ?kwgp2 ?kwgs
-                    }
-                }
-            }
 }

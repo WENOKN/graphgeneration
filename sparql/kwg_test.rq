@@ -7,11 +7,10 @@ PREFIX kwg-ont: <http://stko-kwg.geog.ucsb.edu/lod/ontology/>
 PREFIX kwgr: <http://stko-kwg.geog.ucsb.edu/lod/resource/>
 
 select * where {
-     SERVICE <https://stko-kwg.geog.ucsb.edu/workbench/repositories/KWG> {
             select * where {
-	        ?s ?p "9818212414506663936" .
-        } limit 100
-	}
+	        ?s ?p "9817229210593263616" .
+	        ?s2 ?p2 ?s
+        }
 }
 
 
