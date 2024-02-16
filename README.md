@@ -17,10 +17,10 @@ This can either be:
 
 - [ ] sync with tests at [colab notebook](https://colab.research.google.com/drive/1BYJhx35WXio8qkgHm1pZ2_RNn4SgE76N#scrollTo=teNK6oSLKl7i)
 - [ ] Bring in my Dask code to parallelize the process
-- [ ] loop on parquet files and load to triplestore
-- [ ] put in the S2 grid cell into the RDF (level 30?) 
-- [ ] link the above S2 to KWG level 13 resources
-- [ ] HUCs and cenus ID   (how to put these in)
+- [x] loop on parquet files and load to triplestore
+- [x] put in the S2 grid cell into the RDF (level 12 & 18) 
+- [x] link the above S2 to KWG level 13 resources
+- [ ] HUCs and cenus ID   (how to put these in?)
 
 ## Questions
 
