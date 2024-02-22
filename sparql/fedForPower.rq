@@ -1,0 +1,29 @@
+PREFIX schema: <https://schema.org/>
+PREFIX geo: <http://www.opengis.net/ont/geosparql#>
+PREFIX geof: <http://www.opengis.net/def/function/geosparql/>
+PREFIX unit: <http://www.opengis.net/def/uom/OGC/1.0/>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+PREFIX kwg-ont: <http://stko-kwg.geog.ucsb.edu/lod/ontology/>
+PREFIX kwgr: <http://stko-kwg.geog.ucsb.edu/lod/resource/>
+
+select DISTINCT ?s ?s2id ?buildingLocation
+where {
+    SERVICE <https://stko-kwg.geog.ucsb.edu/workbench/repositories/KWG> {
+        select * where {
+            kwgr:census.USCensusMSA.31000US19580.2019 kwg-ont:sfContains ?s2res .
+            ?s2res kwg-ont:hasID ?s2res_id .
+        }
+    }
+    BIND( ?s2res_id AS ?s2id)
+
+    ?s schema:additionalType "power" .
+    ?s schema:geo ?geo .
+
+    ?geo schema:identifier ?geoid .
+    ?geoid schema:name "s2Level13" .
+    ?geoid schema:value ?s2id .
+
+    ?geo geo:asWKT ?buildingLocation .
+}
+
+
