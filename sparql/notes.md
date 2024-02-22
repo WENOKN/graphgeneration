@@ -19,6 +19,7 @@ used to make a description
     * https://stko-kwg.geog.ucsb.edu/lod/ontology#S2Cell
 
 
+Give me all power infrastructure within this census tract
 
-
+Give me all climate hazards at power station X
 
