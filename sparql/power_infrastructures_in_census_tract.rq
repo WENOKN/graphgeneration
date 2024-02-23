@@ -1,0 +1,31 @@
+
+# Give me all power infrastructure within this census tract
+
+PREFIX schema: <https://schema.org/>
+PREFIX geo: <http://www.opengis.net/ont/geosparql#>
+PREFIX kwg-ont: <http://stko-kwg.geog.ucsb.edu/lod/ontology/>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+
+SELECT DISTINCT ?power ?location ?census_msa ?census_msa_label where {
+    ?power schema:additionalType "power";
+           schema:geo ?geo;
+           schema:description ?desc FILTER(CONTAINS(?desc, "power")) .
+
+    ?geo geo:asWKT ?location;
+         schema:identifier ?geoid .
+
+    ?geoid schema:name "s2Level13";
+           schema:value ?s2l13 .
+
+    OPTIONAL {
+        SERVICE <https://stko-kwg.geog.ucsb.edu/workbench/repositories/KWG> {
+            select DISTINCT * where {
+                ?cell kwg-ont:hasID ?s2l13 .
+                ?census_msa a kwg-ont:USCensusMSA ;
+                    rdfs:label ?census_msa_label;
+                    kwg-ont:sfContains ?cell.
+            }
+        }
+    }
+
+} LIMIT 100
