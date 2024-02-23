@@ -1,0 +1,31 @@
+
+# Give me all climate hazards at power station
+
+PREFIX schema: <https://schema.org/>
+PREFIX geo: <http://www.opengis.net/ont/geosparql#>
+PREFIX kwg-ont: <http://stko-kwg.geog.ucsb.edu/lod/ontology/>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+
+SELECT DISTINCT ?station ?desc ?stationLocation ?hazard ?time ?hazard_type where {
+    ?station schema:additionalType "power";
+             schema:geo ?geo;
+             schema:description ?desc FILTER(CONTAINS(?desc, "power:station")) .
+    ?geo geo:asWKT ?stationLocation;
+         schema:identifier ?geoid .
+    ?geoid schema:name "s2Level13";
+           schema:value ?s2l13 .
+
+    OPTIONAL {
+        SERVICE <https://stko-kwg.geog.ucsb.edu/workbench/repositories/KWG> {
+            select * where {
+                ?cell kwg-ont:hasID ?s2l13 .
+                ?hazard ?kwgp2 ?cell;
+                        a kwg-ont:NOAAHazardEvent;
+                        kwg-ont:hasTemporalScope ?time;
+                        a ?hazard_type .
+                ?hazard_type rdfs:subClassOf kwg-ont:NOAAHazardEvent
+            }
+        }
+    }
+
+} LIMIT 100
