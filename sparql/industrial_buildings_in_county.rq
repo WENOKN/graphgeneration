@@ -20,17 +20,16 @@ SELECT ?building ?desc ?buildingLocation ?countyName where {
         schema:value ?geoid_val .
 
     # extract the county code from FIPS
-    BIND(SUBSTR(?geoid_val, 3, 3) AS ?countyCode)
+    BIND(SUBSTR(?geoid_val, 3, 3) AS ?countyCode) .
 
     # fetch all counties in the specified state
     SERVICE <https://stko-kwg.geog.ucsb.edu/workbench/repositories/KWG> {
         select DISTINCT ?countyName ?countyCode2  where {
             ?county rdf:type gnis:County .
             ?county gnis:countyName ?countyName .
-            ?county gnis:countyCode ?countyCode2 .
+            ?county gnis:countyCode ?countyCode .
             ?county gnis:state gnis-fa:OH .    # change OH to other state abbrev when needed
         }
     }
-    FILTER (?countyCode = ?countyCode2)
 }
 LIMIT 100
