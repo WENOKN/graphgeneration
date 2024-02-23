@@ -1,0 +1,35 @@
+
+# Give me all power infrastructure within this county
+
+PREFIX schema: <https://schema.org/>
+PREFIX geo: <http://www.opengis.net/ont/geosparql#>
+PREFIX gnis: <http://gnis-ld.org/lod/gnis/ontology/>
+PREFIX gnis-fa: <http://gnis-ld.org/lod/gnis/feature-alias/>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+
+SELECT DISTINCT ?power ?desc ?location ?countyName where {
+    ?power schema:additionalType "power";
+           schema:geo ?geo;
+           schema:identifier ?geoid ;
+           schema:description ?desc FILTER(CONTAINS(?desc, "power")) .
+
+    ?geo geo:asWKT ?location.
+
+    ?geoid schema:name "GEOID" ;
+        schema:value ?geoid_val .
+
+    # extract the county code from FIPS
+    BIND(SUBSTR(?geoid_val, 3, 3) AS ?countyCode)
+
+   # fetch all counties in the specified state
+    SERVICE <https://stko-kwg.geog.ucsb.edu/workbench/repositories/KWG> {
+        select DISTINCT ?countyName ?countyCode2  where {
+            ?county rdf:type gnis:County .
+            ?county gnis:countyName ?countyName .
+            ?county gnis:countyCode ?countyCode2 .
+            ?county gnis:state gnis-fa:OH .    # change OH to other state abbrev when needed
+        }
+    }
+    FILTER (?countyCode = ?countyCode2)
+
+} LIMIT 100
