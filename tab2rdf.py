@@ -93,9 +93,12 @@ def fips_from_path(path):
     return state_fp, county_fp
 
 def catchements_intersect(geospatial_dataframe):
-    print("loading catchements")
+
+    catchement_file="https://oss.geocodes-aws.earthcube.org/valentine/wenokn/catchments/catchments.gpkg"
+    print(f"loading catchements from {catchement_file}")
     geospatial_dataframe.rename(columns={"FEATURE_ID": "FEATURE_ID_orig"}, inplace=True)
-    catchments_gdf = gpd.read_file("input/catchments.gpkg").to_crs("EPSG:4326")
+    #catchments_gdf = gpd.read_file("input/catchments.gpkg").to_crs("EPSG:4326")
+    catchments_gdf = gpd.read_file(catchement_file).to_crs("EPSG:4326")
     print("spatial join on catchements")
     # seems these are inplace calls
     df= geospatial_dataframe.sjoin(catchments_gdf, how="inner") #, predicate='contains')
@@ -105,6 +108,9 @@ def catchements_intersect(geospatial_dataframe):
     df.rename(columns={"FEATURE_ID_orig": "FEATURE_ID"}, inplace=True)
     del catchments_gdf
     return df
+
+# NOTE URL TO  bgs enriched file https://oss.geocodes-aws.earthcube.org/valentine/wenokn/NAICS-SIC/oh_bgs_enriched.geojson
+# 66 megs... so
 
 def etl(etlargs):
     obj, u, b, odir = etlargs

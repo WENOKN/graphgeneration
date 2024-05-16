@@ -8,3 +8,6 @@ secret/
 store/
 /.fleet/
 .ipynb_checkpoints/
+input/catchemnts.gpkg
+input/NAICS-SIC/**
+graphs/**

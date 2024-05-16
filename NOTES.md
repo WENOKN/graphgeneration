@@ -13,3 +13,16 @@ Impact Graph
 All we need is the ufokn id from the impacts graph
 
 https://fema.maps.arcgis.com/home/index.html 
+
+
+graphdb:
+when importing, be sure to select advances and preserve blank node ID's
+
+
+WENOKN s3 in SDC cloud
+
+baseurl:
+https://object.cloud.sdsc.edu/v1/AUTH_cfe721002b66477b948dc96df5eaa0b3/wenokn/graphs
+
+example 3039
+https://object.cloud.sdsc.edu/v1/AUTH_cfe721002b66477b948dc96df5eaa0b3/wenokn/graphs/39039.nq
