@@ -77,5 +77,11 @@
       "name": "GEOID",
       "value": "{{GEOID}}"
     }
+    ,
+    {
+      "@type": "PropertyValue",
+      "name": "CATCHMENT_ID",
+      "value": "{{CATCHMENT_ID}}"
+    }
   ]
 }

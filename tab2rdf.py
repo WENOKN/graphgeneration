@@ -11,10 +11,10 @@ import multiprocessing
 from s2sphere import LatLng, CellId
 
 import pandas as pd
+import geopandas as gpd
 from jinja2 import Template
 from minio import Minio
 from pyld import jsonld
-
 
 def get_cell_id(longitude: float, latitude: float, level: int ) -> int:
     return CellId.from_lat_lng(LatLng.from_degrees(latitude, longitude)).parent(level).id()
@@ -33,7 +33,9 @@ def to_ld(row):
     # make dict
     kwd = {"Type": row['Type'], "Description": row['Description'], "Address": row['Address'], "AreaSqm": row['AreaSqm'],
            "X": row['X'], "Y": row['Y'], "Z": row['Z'], 'SOURCE_ID': row['SOURCE_ID'],
-           'UFOKN_ID': row['UFOKN_ID'], 'FEATURE_ID': row['FEATURE_ID'], 'GEOID': row['GEOID'], 'CellID13': s2cell13,
+           'UFOKN_ID': row['UFOKN_ID'], 'FEATURE_ID': row['FEATURE_ID'], 'GEOID': row['GEOID'],
+           'CATCHMENT_ID': row['CATCHMENT_ID'],
+           'CellID13': s2cell13,
            'CellID18': s2cell18}
     # print("{} {} {}".format(kwd['X'], kwd['Y'], kwd['Z']))
 
@@ -52,11 +54,11 @@ def to_ld(row):
         except Exception as e:
             print(e)
             # print(kwd)
-            print("OFOKN_ID: {}".format(kwd['UFOKN_ID']))
+            print("OFOKN_ID: {}  | Error converting to RDF".format(kwd['UFOKN_ID']))
     except Exception as e:
         print(e)
         # print(kwd)
-        print("OFOKN_ID: {}".format(kwd['UFOKN_ID']))
+        print("OFOKN_ID: {}  | ERROR loading json".format(kwd['UFOKN_ID']))
 
     return nt
 
@@ -90,6 +92,19 @@ def fips_from_path(path):
 
     return state_fp, county_fp
 
+def catchements_intersect(geospatial_dataframe):
+    print("loading catchements")
+    geospatial_dataframe.rename(columns={"FEATURE_ID": "FEATURE_ID_orig"}, inplace=True)
+    catchments_gdf = gpd.read_file("input/catchments.gpkg").to_crs("EPSG:4326")
+    print("spatial join on catchements")
+    # seems these are inplace calls
+    df= geospatial_dataframe.sjoin(catchments_gdf, how="inner") #, predicate='contains')
+    print("spatial join on catchements complete")
+
+    df.rename( columns= {"feature_id": "CATCHMENT_ID"},inplace = True)
+    df.rename(columns={"FEATURE_ID_orig": "FEATURE_ID"}, inplace=True)
+    del catchments_gdf
+    return df
 
 def etl(etlargs):
     obj, u, b, odir = etlargs
@@ -105,7 +120,18 @@ def etl(etlargs):
     s3.download_fileobj("backup.udp-data-urmi", "STATEFP={}/COUNTYFP={}/data.parquet".format(state_fp, county_fp),
                         buffer)
     df = pd.read_parquet(buffer)
-
+    print("Adding Geometry to data")
+    df =  gpd.GeoDataFrame(
+        df,
+    #    geometry=gpd.points_from_xy(df.Y, df.X), crs="EPSG:4326")
+        geometry = gpd.points_from_xy(df.X, df.Y), crs = "EPSG:4326") # geocorrds long lay
+    df=catchements_intersect(df)
+    # print("loading catchements")
+    # catchments_gdf = gpd.read_file("input/catchments.gpkg").to_crs("EPSG:4326")
+    # print("spatial join on catchements")
+    # df= df.sjoin(catchments_gdf, how="inner", predicate='within')
+    # df.rename(columns={"feature_id", "Catchment_ID"})
+    # print("spatial join on catchements complete")
     # Elevation Catch, run by group to ensure this isn't changing history
     df['Z'] = df['Z'].fillna(0)
     df['AreaSqm'] = df['AreaSqm'].fillna(0)
@@ -156,4 +182,5 @@ def main():
 
 if __name__ == '__main__':
     main()
+
 
