@@ -96,7 +96,7 @@ def catchements_intersect(geospatial_dataframe):
 
     catchement_file="https://oss.geocodes-aws.earthcube.org/valentine/wenokn/catchments/catchments.gpkg"
     print(f"loading catchements from {catchement_file}")
-    geospatial_dataframe.rename(columns={"FEATURE_ID": "FEATURE_ID_orig"}, inplace=True)
+   # geospatial_dataframe.rename(columns={"FEATURE_ID": "FEATURE_ID_orig"}, inplace=True)
     #catchments_gdf = gpd.read_file("input/catchments.gpkg").to_crs("EPSG:4326")
     catchments_gdf = gpd.read_file(catchement_file).to_crs("EPSG:4326")
     print("spatial join on catchements")
@@ -105,7 +105,7 @@ def catchements_intersect(geospatial_dataframe):
     print("spatial join on catchements complete")
 
     df.rename( columns= {"feature_id": "CATCHMENT_ID"},inplace = True)
-    df.rename(columns={"FEATURE_ID_orig": "FEATURE_ID"}, inplace=True)
+   # df.rename(columns={"FEATURE_ID_orig": "FEATURE_ID"}, inplace=True)
     del catchments_gdf
     return df
 
@@ -113,10 +113,10 @@ def catchements_intersect(geospatial_dataframe):
 # 66 megs... so
 
 def etl(etlargs):
-    obj, u, b, odir = etlargs
+    obj, u, b, odir, temp = etlargs
     session = boto3.Session(profile_name='ufokn')
     s3 = session.client('s3')
-
+    tempdir = "graph_temp"
     path = "s3://{}/{}/{}".format(u, b, obj.object_name)
     print("Processing: {}".format(path))  # Each object is a dictionary containing details like object name, size, etc.
 
@@ -126,12 +126,16 @@ def etl(etlargs):
     s3.download_fileobj("backup.udp-data-urmi", "STATEFP={}/COUNTYFP={}/data.parquet".format(state_fp, county_fp),
                         buffer)
     df = pd.read_parquet(buffer)
+    if temp:
+        df.to_parquet("{}/data_{}{}.parquet".format(tempdir, state_fp, county_fp))
     print("Adding Geometry to data")
     df =  gpd.GeoDataFrame(
         df,
     #    geometry=gpd.points_from_xy(df.Y, df.X), crs="EPSG:4326")
         geometry = gpd.points_from_xy(df.X, df.Y), crs = "EPSG:4326") # geocorrds long lay
     df=catchements_intersect(df)
+    if temp:
+        df.to_parquet("{}/fields_{}{}.parquet".format(tempdir, state_fp, county_fp))
     # print("loading catchements")
     # catchments_gdf = gpd.read_file("input/catchments.gpkg").to_crs("EPSG:4326")
     # print("spatial join on catchements")
@@ -159,7 +163,7 @@ def main():
     parser.add_argument("--source", type=str, help="Source URL")
 
     parser.add_argument("--outputdir", type=str, help="Directory for output files")
-
+    parser.add_argument("--temp", action=argparse.BooleanOptionalAction, help="write intermediate files to graph_temp directory")
     args = parser.parse_args()
     if args.source is None:
         print("Error: the --source argument is required")
@@ -179,7 +183,7 @@ def main():
     mc = Minio(u, ak, sk, secure=False)     # Create client with access and secret key.
     objects = mc.list_objects(b, prefix=o, recursive=True)       # get the object list from the path provided
 
-    etlargs = [(obj, u, b, odir) for obj in objects]  # make tuple for etl call (pass S3 client here too?)
+    etlargs = [(obj, u, b, odir, args.temp) for obj in objects]  # make tuple for etl call (pass S3 client here too?)
 
     pool = multiprocessing.Pool(processes=2)  # CAUTION: assume 2 Gb memory / thread approximately
     pool.map(etl, etlargs)

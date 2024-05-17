@@ -18,6 +18,9 @@ https://fema.maps.arcgis.com/home/index.html
 graphdb:
 when importing, be sure to select advances and preserve blank node ID's
 
+convert catchmetns to rdf:
+https://github.com/redmer/rdf-geopackage
+
 
 WENOKN s3 in SDC cloud
 
