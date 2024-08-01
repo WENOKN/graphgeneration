@@ -11,3 +11,6 @@ store/
 input/catchemnts.gpkg
 input/NAICS-SIC/**
 graphs/**
+
+**.parquet
+**.nq
