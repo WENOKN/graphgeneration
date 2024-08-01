@@ -29,3 +29,51 @@ https://object.cloud.sdsc.edu/v1/AUTH_cfe721002b66477b948dc96df5eaa0b3/wenokn/gr
 
 example 3039
 https://object.cloud.sdsc.edu/v1/AUTH_cfe721002b66477b948dc96df5eaa0b3/wenokn/graphs/39039.nq
+
+
+impacts:
+files: s3://backup.ufokn.impacts.nwm-api/
+https://backup.ufokn.impacts.nwm-api.s3.amazonaws.com
+
+conform to:
+https://schema.org/Observation
+{
+  "@context": "https://schema.org/",
+  "@type": "PropertyValue",
+  "@id": "uri:WEN_OKN_FLOOD",
+  "name": "Building Flooded",
+    "value": {MAXDEPTH},
+  "valueReference": {
+    "@context": "https://schema.org/",
+      "@type": "DateTime",
+      "@id": "WEN_OKN_FLOOD_TIME",
+      "name": "Predicted Time of Flooding",
+      "value": {DATETIME}
+    }
+ },
+  
+The property
+http://wiki.goodrelations-vocabulary.org/Documentation/UN/CEFACT_Common_Codes
+date and time from file names
+
+{
+  "@context": "https://schema.org/",
+  "@id": "uri:Observation_{UFOKN_ID}_{DATETIME}",
+  "@type": "Observation",
+  "name": "Flooded Building {UFOKN_ID} ",
+  "description": "An prediction of depth of flood for a building at POINT({LAT},{LON}) for time {DATETIME}",
+  "variableMeasured": { 
+    "@context": "https://schema.org/",
+    "@type": "Property",
+    "name": "Building Flooded",
+  },
+  "observationAbout": { "@id": "https://ufokn.org/id/urmi/{UFOKN_ID}" },
+  "observationDate": {DATETIME},
+  "value": {MAXDEPTH},
+  "measuredProperty": {"@id": "height"},
+  "unitCode": "MTR"
+}
+
+thought duckdb spatial in streamlit
+
+

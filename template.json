@@ -80,7 +80,12 @@
     ,
     {
       "@type": "PropertyValue",
-      "name": "CATCHMENT_ID",
+      "name": "FIPS",
+      "value": "{{GEOID}}"
+    },
+    {
+      "@type": "PropertyValue",
+      "name": "CATCHMENT_FEATURE_ID",
       "value": "{{CATCHMENT_ID}}"
     }
   ]

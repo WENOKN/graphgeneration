@@ -1,0 +1,42 @@
+{
+  "@context": {
+    "@vocab": "https://schema.org/",
+    "geosparql": "http://www.opengis.net/ont/geosparql#"
+  },
+  "@id": "uri:WEN-OKN_impacts_observation_{{UFOKN_ID}}_{{DATEREF}}",
+  "@type": "Observation",
+  "name": "Flooded Building {{UFOKN_ID}} ",
+  "description": "An prediction of depth of flood for a building at POINT({{X}},{{Y}}) for time {{DATETIME}}",
+  "variableMeasured": {
+    "@type": "PropertyValue",
+    "propertyID": "http://qudt.org/vocab/quantitykind/Depth",
+    "value": "{{MAXDEPTH}}",
+    "name": "Depth of Flood for building",
+    "unitCode": "MTR"
+  },
+  "observationAbout": {
+    "@id": "https://ufokn.org/id/urmi/{{UFOKN_ID}}",
+    "identifier": "https://ufokn.org/id/urmi/{{UFOKN_ID}}",
+    "name": "building flooded {{UFOKN_ID}}",
+    "geo": [
+      {
+        "@type": "GeoCoordinates",
+        "latitude": {{Y}},
+      "longitude": {{X}}
+    },
+      {
+        "@type": "GeoShape",
+        "geosparql:asWKT": {
+          "@value": "POINT( {{X}} {{Y}}  )",
+          "@type": "geosparql:wktLiteral"
+        }
+      }
+    ],
+    "observationDate": "2024-07-30T15:00",
+    "value": "true",
+    "measuredProperty": {
+      "identifier": "https://www.wikidata.org/wiki/Q8068",
+      "name": "flood"
+    }
+  }
+}

@@ -31,10 +31,13 @@ def to_ld(row):
 
     # Type Description Address AreaSqm X Y Z SOURCE_ID UFOKN_ID FEATURE_ID GEOID
     # make dict
+    # dwv 202404 -- it was determined that FEATURE_ID was actually the FEATURE_ID from the Catchement file/knowledgebase.
+    # added a CATCHMENT_FEATURE_ID to better communicate this.
     kwd = {"Type": row['Type'], "Description": row['Description'], "Address": row['Address'], "AreaSqm": row['AreaSqm'],
            "X": row['X'], "Y": row['Y'], "Z": row['Z'], 'SOURCE_ID': row['SOURCE_ID'],
            'UFOKN_ID': row['UFOKN_ID'], 'FEATURE_ID': row['FEATURE_ID'], 'GEOID': row['GEOID'],
-           'CATCHMENT_ID': row['CATCHMENT_ID'],
+         #  'CATCHMENT_FEATURE_ID': row['CATCHMENT_ID'],
+             'CATCHMENT_FEATURE_ID': row['FEATURE_ID'],
            'CellID13': s2cell13,
            'CellID18': s2cell18}
     # print("{} {} {}".format(kwd['X'], kwd['Y'], kwd['Z']))
@@ -93,7 +96,9 @@ def fips_from_path(path):
     return state_fp, county_fp
 
 def catchements_intersect(geospatial_dataframe):
-
+# dwv 202404 -- it was determined that FEATURE_ID was actually the FEATURE_ID from the Catchement file/knowledgebase.
+# added a CATCHMENT_FEATURE_ID to better communicate this.
+# this code is no longer needed
     catchement_file="https://oss.geocodes-aws.earthcube.org/valentine/wenokn/catchments/catchments.gpkg"
     print(f"loading catchements from {catchement_file}")
    # geospatial_dataframe.rename(columns={"FEATURE_ID": "FEATURE_ID_orig"}, inplace=True)
@@ -133,7 +138,9 @@ def etl(etlargs):
         df,
     #    geometry=gpd.points_from_xy(df.Y, df.X), crs="EPSG:4326")
         geometry = gpd.points_from_xy(df.X, df.Y), crs = "EPSG:4326") # geocorrds long lay
-    df=catchements_intersect(df)
+    #df=catchements_intersect(df)
+    # dwv 202404 -- it was determined that FEATURE_ID was actually the FEATURE_ID from the Catchements source
+    df["CATCHMENT_FEATURE_ID"] = df["FEATURE_ID"]
     if temp:
         df.to_parquet("{}/fields_{}{}.parquet".format(tempdir, state_fp, county_fp))
     # print("loading catchements")
