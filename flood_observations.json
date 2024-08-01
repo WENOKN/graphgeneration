@@ -22,7 +22,7 @@
       {
         "@type": "GeoCoordinates",
         "latitude": {{Y}},
-      "longitude": {{X}}
+      "longitude":{{X}}
     },
       {
         "@type": "GeoShape",
@@ -31,7 +31,8 @@
           "@type": "geosparql:wktLiteral"
         }
       }
-    ],
+    ]
+  },
     "observationDate": "2024-07-30T15:00",
     "value": "true",
     "measuredProperty": {
@@ -39,4 +40,4 @@
       "name": "flood"
     }
   }
-}
+
