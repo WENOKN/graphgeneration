@@ -45,7 +45,7 @@ def to_ld(row):
     # added a CATCHMENT_FEATURE_ID to better communicate this.
     year,month,day,hour = DATETIME_to_parts( row['DATETIME'])
     dt = datetime.datetime(year,month,day,hour)
-    kwd = {"DATETIME": dt,
+    kwd = {"DATETIME": dt.isoformat(),
            "DATEREF": row['DATETIME'],
            "MAXDEPTH": row['max_depth'],
 
@@ -162,7 +162,7 @@ def bulk_rdf(sdir=None, sfile=None, outfile=None):
     store.clear()  # TODO:  make this a boolean flag in case you want to keep the store dir around
 
     if sdir is not None:
-        print("Indexing directory: {}".format(sdir))
+        print("Indexing directory: {} to {}".format(sdir,outfile))
         con.execute("SELECT rdf FROM read_parquet('{}/*.parquet')".format(sdir))  # Replace with your query
     else:
         print("Indexing file: {}".format(sfile))
@@ -193,10 +193,12 @@ def main():
         print("Error: the --outputdir argument is required")
         sys.exit(1)
     if args.date is None:
-        print("Latest Date is being used")
+
         datehour_part = datetime.datetime.now().strftime("%Y%m%d%H")
+        print(f"Latest Date is being used {datehour_part}")
     else:
         datehour_part = args.date
+        print(f" Date from cli arg {datehour_part}")
     s3url = args.source
     #odir = args.outputdir
     odir = os.path.realpath(args.outputdir)
@@ -220,10 +222,11 @@ def main():
     impacts_path = f"impacts20/nwm-short_range/{datehour_part}_test.parquet"
 
     etl([impacts_path, u, b, odir, args.temp, datehour_part])
-    out=f"graph_temp/impacts_{datehour_part}.nq"
+    out=f"{odir}/impacts_{datehour_part}.nq"
     file_parquet= f"{odir}/impacts_{datehour_part}.parquet"
     bulk_rdf(sdir=None, sfile=file_parquet, outfile=out)
-
+    latest=f"{odir}/impacts_latest.nq"
+    bulk_rdf(sdir=None, sfile=file_parquet, outfile=latest)
 if __name__ == '__main__':
     main()
 

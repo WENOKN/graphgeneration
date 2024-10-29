@@ -1,0 +1,30 @@
+
+# Give me the history of flooding within 5 miles of this power station
+
+PREFIX kwg-ont: <http://stko-kwg.geog.ucsb.edu/lod/ontology/>
+PREFIX geo: <http://www.opengis.net/ont/geosparql#>
+PREFIX geof: <http://www.opengis.net/def/function/geosparql/>
+PREFIX schema: <https://schema.org/>
+PREFIX unit: <http://www.opengis.net/def/uom/OGC/1.0/>
+
+SELECT ?powerStation ?powerLocation ?flood ?floodLocation ?distance_m WHERE {
+
+    BIND(<https://ufokn.org/id/urmi/dnuyx2q9fvkn> as ?powerStation)
+    BIND(5 as ?miles) .
+
+    ?powerStation schema:additionalType "power" ;
+        schema:geo/geo:asWKT ?powerLocation ;
+        schema:description ?desc
+    FILTER (CONTAINS(?desc, "station")) .
+
+    SERVICE <https://stko-kwg.geog.ucsb.edu/workbench/repositories/KWG> {
+        SELECT * WHERE {
+            ?flood a kwg-ont:NOAAFlood ;
+                geo:hasGeometry/geo:asWKT ?floodLocation .
+        }
+    }
+
+    BIND(geof:distance(?floodLocation, ?powerLocation, unit:metre) AS ?distance_m) .
+    Filter (?distance_m < ?miles * 1609.34) .
+}
+LIMIT 10

@@ -1,0 +1,22 @@
+# Give me all underground fuel storage tanks (USTs) within 5 mile of this building.
+
+PREFIX schema: <https://schema.org/>
+PREFIX geo: <http://www.opengis.net/ont/geosparql#>
+PREFIX geof: <http://www.opengis.net/def/function/geosparql/>
+PREFIX unit: <http://www.opengis.net/def/uom/OGC/1.0/>
+
+SELECT ?tank ?tankLocation WHERE {
+
+    BIND(<https://ufokn.org/id/urmi/dpkst5vdy01g> as ?building)
+    BIND(5 as ?miles) .
+    
+	?tank schema:description "osm-ms:man_made:storage_tank";
+       schema:geo/geo:asWKT ?tankLocation.
+    
+    ?building schema:additionalType "building" ;
+        schema:description ?buildingDesc ;
+        schema:geo/geo:asWKT ?buildingLocation .
+    
+    BIND(geof:distance(?tankLocation, ?buildingLocation, unit:metre) AS ?distance_m) .
+    Filter (?distance_m < ?miles * 1609.34)
+} limit 10 
